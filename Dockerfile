@@ -1,13 +1,20 @@
-# use a node base image
-FROM node:7-onbuild
+# Use the official Node.js image as a base
+FROM node:14
 
-# set maintainer
-LABEL maintainer "miiro@getintodevops.com"
+# Set the working directory in the container
+WORKDIR /app
 
-# set a health check
-HEALTHCHECK --interval=5s \
-            --timeout=5s \
-            CMD CURL -f http://127.0.0.1:8000 || exit 1
-            
- # tell docker what port to expose
- EXPOSE 80000
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application code
+COPY . .
+
+# Expose the port the app runs on
+EXPOSE 3000
+
+# Command to run the application
+CMD ["node", "index.js"]
