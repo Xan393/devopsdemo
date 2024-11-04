@@ -7,7 +7,7 @@ node {
     }
     
     stage('Build image') {
-        app = docker.build("xan393/devopsdemo")
+        app = docker.build("xandevops/xandevops1")
     }
     
     stage('Test image') {
