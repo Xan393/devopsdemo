@@ -5,7 +5,7 @@ pipeline {
         DOCKER_CREDENTIALS_ID = 'your-dockerhub-credentials-id' // Jenkins credentials ID for Docker Hub
         DOCKER_IMAGE_NAME = 'xandevops/xandevops1'
         REPO_URL = 'https://github.com/Xan393/devopsdemo.git'
-        BRANCH_NAME = 'main' // Specify the branch you want to build
+        BRANCH_NAME = 'master' // Specify the branch you want to build
     }
 
     stages {
