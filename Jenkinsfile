@@ -17,6 +17,13 @@ pipeline {
                 }
             }
         }
+        
+        stage('Checkout Code') {
+            steps {
+                // Checkout the repository where the Dockerfile and source code are stored
+                git 'https://github.com/Xan393/devopsdemo/blob/a23e6635c9e05cd6cc563a4a10b69546df787554/Dockerfile'
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
