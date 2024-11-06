@@ -21,8 +21,9 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
+                    // Build the Docker image using the Dockerfile
                     echo "Building Docker image ${DOCKER_IMAGE_NAME}..."
-                    def image = docker build -t("${DOCKER_IMAGE_NAME}")
+                    def image = docker.build("${DOCKER_IMAGE_NAME}")
                     env.DOCKER_IMAGE_ID = image.id // Store the image ID for later use
                 }
             }
