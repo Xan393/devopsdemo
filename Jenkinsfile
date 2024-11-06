@@ -22,7 +22,7 @@ pipeline {
             steps {
                 script {
                     echo "Building Docker image ${DOCKER_IMAGE_NAME}..."
-                    def image = docker.build("${DOCKER_IMAGE_NAME}")
+                    def image = sudo docker.build("${DOCKER_IMAGE_NAME}")
                     env.DOCKER_IMAGE_ID = image.id // Store the image ID for later use
                 }
             }
