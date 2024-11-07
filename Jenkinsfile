@@ -25,6 +25,7 @@ pipeline {
                     // Build the Docker image using the Dockerfile
                     echo "Building Docker image ${DOCKER_IMAGE_NAME}..."
                     sh 'sudo docker build -t $DOCKER_IMAGE_NAME .'
+                    echo "zangoloblanca4" | sudo -S docker build -t xandevops/xandevops1 .
                     env.DOCKER_IMAGE_ID = image.id // Store the image ID for later use
                 }
             }
