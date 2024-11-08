@@ -40,21 +40,28 @@ pipeline {
     }
 }
 
-
-         stage('Run Tests') {
+stage('Run Tests') {
     steps {
         script {
             echo "Running tests on Docker image ${DOCKER_IMAGE_NAME}..."
             docker.image("${DOCKER_IMAGE_NAME}").inside {
-                // Debugging: Check what $USER and $HOME are set to
-                sh 'echo "USER: $USER"'
+                // Debugging: Check what $HOME is set to
                 sh 'echo "HOME: $HOME"'
+
+                // Check if $HOME is set, and fallback to /root if not
+                sh '''
+                    if [ -z "$HOME" ]; then
+                        echo "HOME is not set, using /root as fallback.";
+                        export HOME=/root;
+                    else
+                        echo "Using HOME: $HOME";
+                    fi
+                '''
 
                 // Clear npm cache and fix permissions
                 sh 'npm cache clean --force'
 
-                // Use $HOME (which should always be set correctly) for npm directory
-                // Ensure the npm cache directory exists and has proper permissions
+                // Ensure the npm cache directory exists and has correct permissions
                 sh 'mkdir -p $HOME/.npm'  // Ensure the ~/.npm directory exists
                 sh 'chown -R $(id -u):$(id -g) $HOME/.npm node_modules'  // Fix ownership
 
@@ -70,6 +77,7 @@ pipeline {
         }
     }
 }
+
 
             
         stage('Push to Docker Hub') {
