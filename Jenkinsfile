@@ -35,7 +35,7 @@ pipeline {
                 script {
                     echo "Running tests on Docker image ${DOCKER_IMAGE_NAME}..."
                     docker.image("${DOCKER_IMAGE_NAME}").inside {
-                        sh 'your-test-command' // Replace with your actual test command
+                        sh 'npm test' // Replace with your actual test command
                     }
                 }
             }
