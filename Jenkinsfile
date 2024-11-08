@@ -41,13 +41,18 @@ pipeline {
 }
 
 
-        stage('Run Tests') {
-            steps {
-                script {
-                    echo "Running tests on Docker image ${DOCKER_IMAGE_NAME}..."
-                    docker.image("${DOCKER_IMAGE_NAME}").inside {
-                        sh 'npm install' // Replace with your actual test command
-                        sh 'npm test' 
+         stage('Run Tests') {
+    steps {
+        script {
+            echo "Running tests on Docker image ${DOCKER_IMAGE_NAME}..."
+            docker.image("${DOCKER_IMAGE_NAME}").inside {
+                // Clear npm cache and fix permissions
+                sh 'npm cache clean --force'
+                sh 'sudo chown -R $(whoami):$(whoami) ~/.npm node_modules'
+
+                // Install dependencies and run tests
+                sh 'npm install'
+                sh 'npm test'
                     }
                 }
             }
