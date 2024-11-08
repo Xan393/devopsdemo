@@ -46,23 +46,32 @@ pipeline {
         script {
             echo "Running tests on Docker image ${DOCKER_IMAGE_NAME}..."
             docker.image("${DOCKER_IMAGE_NAME}").inside {
+                // Debugging: Check what $USER and $HOME are set to
+                sh 'echo "USER: $USER"'
+                sh 'echo "HOME: $HOME"'
+
                 // Clear npm cache and fix permissions
                 sh 'npm cache clean --force'
-                // Ensure the npm directory exists and fix permissions
-                sh 'mkdir -p /home/$USER/.npm'  // Ensure the /home/$USER/.npm directory exists
-                sh 'chown -R $(id -u):$(id -g) ~/.npm node_modules'
-                sh 'chown -R $(id -u):$(id -g) ~/.npm'  // Fix ownership of the npm cache
-                
-                // Install dependencies and run tests
+
+                // Use $HOME (which should always be set correctly) for npm directory
+                // Ensure the npm cache directory exists and has proper permissions
+                sh 'mkdir -p $HOME/.npm'  // Ensure the ~/.npm directory exists
+                sh 'chown -R $(id -u):$(id -g) $HOME/.npm node_modules'  // Fix ownership
+
+                // Install dependencies
                 sh 'npm install'
-                // Fix permissions of node_modules directory (after npm install)
+
+                // Fix permissions of node_modules directory after npm install
                 sh 'chown -R $(id -u):$(id -g) node_modules'
+
+                // Run tests
                 sh 'npm test'
-                    }
-                }
             }
         }
+    }
+}
 
+            
         stage('Push to Docker Hub') {
             steps {
                 script {
