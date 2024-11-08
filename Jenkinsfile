@@ -25,6 +25,10 @@ pipeline {
                     // Build the Docker image using the Dockerfile
                     echo "Building Docker image ${DOCKER_IMAGE_NAME}..."
                     sh 'sudo docker build -t $DOCKER_IMAGE_NAME .'
+                    // Capture the image ID from the build output
+                    def buildOutput = sh(script: 'docker build -t $DOCKER_IMAGE_NAME .', returnStdout: true).trim()
+                    // Extract image ID from the output (assuming the output includes 'Successfully built <image_id>')
+                    def imageId = buildOutput.split("\n").find { it.startsWith("Successfully built") }?.split()[-1]
                     env.DOCKER_IMAGE_ID = image.id // Store the image ID for later use
                 }
             }
