@@ -48,7 +48,7 @@ pipeline {
             docker.image("${DOCKER_IMAGE_NAME}").inside {
                 // Clear npm cache and fix permissions
                 sh 'npm cache clean --force'
-                sh 'chown -R $(whoami):$(whoamii) ~/.npm node_modules'
+                sh 'chown -R $(id -u):$(id -g) ~/.npm node_modules'
 
                 // Install dependencies and run tests
                 sh 'npm install'
