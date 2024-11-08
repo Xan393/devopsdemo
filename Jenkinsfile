@@ -44,36 +44,36 @@ stage('Run Tests') {
     steps {
         script {
             echo "Running tests on Docker image ${DOCKER_IMAGE_NAME}..."
-            docker.image("${DOCKER_IMAGE_NAME}").inside {
-                // Debugging: Check what $HOME is set to
-                sh 'echo "HOME: $HOME"'
 
-                // Check if $HOME is set, and fallback to /root if not
-                sh '''
-                    if [ -z "$HOME" ]; then
-                        echo "HOME is not set, using /root as fallback.";
-                        export HOME=/root;
-                    else
-                        echo "Using HOME: $HOME";
-                    fi
-                '''
+            // In case Jenkins is not inside a Docker container, use the host environment directly
+            // Check if $HOME is set
+            sh 'echo "HOME: $HOME"'
+            
+            // If $HOME is not set, set it to the default Jenkins home directory
+            sh '''
+                if [ -z "$HOME" ]; then
+                    echo "HOME is not set. Using default Jenkins home directory /var/lib/jenkins";
+                    export HOME=/var/lib/jenkins;
+                else
+                    echo "Using HOME: $HOME";
+                fi
+            '''
 
-                // Clear npm cache and fix permissions
-                sh 'npm cache clean --force'
+            // Clear npm cache and fix permissions
+            sh 'npm cache clean --force'
 
-                // Ensure the npm cache directory exists and has correct permissions
-                sh 'mkdir -p $HOME/.npm'  // Ensure the ~/.npm directory exists
-                sh 'chown -R $(id -u):$(id -g) $HOME/.npm node_modules'  // Fix ownership
+            // Ensure the npm directory exists and has the correct permissions
+            sh 'mkdir -p $HOME/.npm'  // Ensure the ~/.npm directory exists
+            sh 'chown -R $(id -u):$(id -g) $HOME/.npm'  // Fix ownership
 
-                // Install dependencies
-                sh 'npm install'
+            // Install dependencies
+            sh 'npm install'
 
-                // Fix permissions of node_modules directory after npm install
-                sh 'chown -R $(id -u):$(id -g) node_modules'
+            // Fix permissions of node_modules directory (after npm install)
+            sh 'chown -R $(id -u):$(id -g) node_modules'
 
-                // Run tests
-                sh 'npm test'
-            }
+            // Run tests
+            sh 'npm test'
         }
     }
 }
