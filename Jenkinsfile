@@ -20,20 +20,26 @@ pipeline {
         
 
         stage('Build Docker Image') {
-            steps {
-                script {
-                    // Build the Docker image using the Dockerfile
-                    echo "Building Docker image ${DOCKER_IMAGE_NAME}..."
-                    sh 'sudo docker build -t $DOCKER_IMAGE_NAME .'
-                    // Capture the image ID from the build output
-                    def buildOutput = sh(script: 'docker build -t $DOCKER_IMAGE_NAME .', returnStdout: true).trim()
-                    // Extract image ID from the output (assuming the output includes 'Successfully built <image_id>')
-                    def imageId = buildOutput.split("\n").find { it.startsWith("Successfully built") }?.split()[-1]
-                    env.DOCKER_IMAGE_ID = image.id // Store the image ID for later use
-                    echo "Docker image ID: ${env.DOCKER_IMAGE_ID}"
-                }
+    steps {
+        script {
+            echo "Building Docker image ${DOCKER_IMAGE_NAME}..."
+            
+            // Ensure Docker is executable without 'sudo'
+            def buildOutput = sh(script: "docker build -t ${DOCKER_IMAGE_NAME} .", returnStdout: true).trim()
+            
+            // Extract the image ID
+            def imageId = buildOutput.split("\n").find { it.contains("Successfully built") }
+            if (imageId) {
+                imageId = imageId.split()[-1] // Extract the image ID
+                env.DOCKER_IMAGE_ID = imageId // Store image ID in the environment variable
+                echo "Docker image ID: ${env.DOCKER_IMAGE_ID}"
+            } else {
+                error "Docker build failed, unable to extract image ID"
             }
         }
+    }
+}
+
 
         stage('Run Tests') {
             steps {
