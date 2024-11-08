@@ -30,6 +30,7 @@ pipeline {
                     // Extract image ID from the output (assuming the output includes 'Successfully built <image_id>')
                     def imageId = buildOutput.split("\n").find { it.startsWith("Successfully built") }?.split()[-1]
                     env.DOCKER_IMAGE_ID = image.id // Store the image ID for later use
+                    echo "Docker image ID: ${env.DOCKER_IMAGE_ID}"
                 }
             }
         }
