@@ -48,10 +48,15 @@ pipeline {
             docker.image("${DOCKER_IMAGE_NAME}").inside {
                 // Clear npm cache and fix permissions
                 sh 'npm cache clean --force'
+                // Ensure the npm directory exists and fix permissions
+                sh 'mkdir -p ~/.npm'  // Ensure the ~/.npm directory exists
                 sh 'chown -R $(id -u):$(id -g) ~/.npm node_modules'
-
+                sh 'chown -R $(id -u):$(id -g) ~/.npm'  // Fix ownership of the npm cache
+                
                 // Install dependencies and run tests
                 sh 'npm install'
+                // Fix permissions of node_modules directory (after npm install)
+                sh 'chown -R $(id -u):$(id -g) node_modules'
                 sh 'npm test'
                     }
                 }
