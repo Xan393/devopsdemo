@@ -84,7 +84,7 @@ stage('Run Tests') {
             steps {
                 script {
                     echo "Pushing Docker image ${DOCKER_IMAGE_NAME} to Docker Hub..."
-                    docker.withRegistry('https://index.docker.io/v1/', "${DOCKER_CREDENTIALS_ID}") {
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
                         docker.image("${DOCKER_IMAGE_NAME}").push("latest")
                     }
                 }
