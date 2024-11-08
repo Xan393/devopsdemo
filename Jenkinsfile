@@ -49,7 +49,7 @@ pipeline {
                 // Clear npm cache and fix permissions
                 sh 'npm cache clean --force'
                 // Ensure the npm directory exists and fix permissions
-                sh 'sudo mkdir -p /home/$USER/.npm'  // Ensure the ~/.npm directory exists
+                sh 'mkdir -p /home/$USER/.npm'  // Ensure the /home/$USER/.npm directory exists
                 sh 'chown -R $(id -u):$(id -g) ~/.npm node_modules'
                 sh 'chown -R $(id -u):$(id -g) ~/.npm'  // Fix ownership of the npm cache
                 
